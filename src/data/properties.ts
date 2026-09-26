@@ -7,6 +7,7 @@ export interface Property {
   title: string;
   city: City;
   locality: string;
+  district: string;
   zone: string;
   type: PropertyType;
   bhk: number;
@@ -27,6 +28,8 @@ export interface Property {
 interface Locality {
   city: City;
   name: string;
+  /** Revenue district, matching MortgageDash's Location column (e.g. MUMBAI SUBURBAN). */
+  district: string;
   zone: string;
   /** Indicative carpet-area rate, ₹/sq ft */
   rate: number;
@@ -35,28 +38,31 @@ interface Locality {
 
 // Indicative 2026 carpet-area rates; for demonstration only.
 const LOCALITIES: Locality[] = [
-  { city: 'Mumbai', name: 'Bandra West', zone: 'Western Suburbs', rate: 58_000, highlights: ['Sea-link access', 'Carter Road promenade'] },
-  { city: 'Mumbai', name: 'Worli', zone: 'South Central', rate: 62_000, highlights: ['Coastal Road', 'Sea views'] },
-  { city: 'Mumbai', name: 'Andheri West', zone: 'Western Suburbs', rate: 31_000, highlights: ['Metro Line 1', 'Lokhandwala market'] },
-  { city: 'Mumbai', name: 'Powai', zone: 'Central Suburbs', rate: 29_000, highlights: ['Hiranandani Gardens', 'Powai Lake'] },
-  { city: 'Mumbai', name: 'Goregaon East', zone: 'Western Suburbs', rate: 23_000, highlights: ['NESCO & Oberoi Mall', 'WEH access'] },
-  { city: 'Mumbai', name: 'Chembur', zone: 'Eastern Suburbs', rate: 26_000, highlights: ['Eastern Freeway', 'Monorail'] },
-  { city: 'Mumbai', name: 'Malad West', zone: 'Western Suburbs', rate: 21_000, highlights: ['Mindspace IT park', 'Metro Line 2A'] },
-  { city: 'Mumbai', name: 'Borivali West', zone: 'Western Suburbs', rate: 22_000, highlights: ['Sanjay Gandhi National Park', 'Metro Line 2A'] },
-  { city: 'Mumbai', name: 'Mulund West', zone: 'Eastern Suburbs', rate: 19_500, highlights: ['LBS Marg retail', 'Central line'] },
-  { city: 'Mumbai', name: 'Thane West', zone: 'MMR – Thane', rate: 15_500, highlights: ['Ghodbunder Road', 'Upcoming Metro 4'] },
-  { city: 'Mumbai', name: 'Mira Road', zone: 'MMR – North', rate: 13_000, highlights: ['Metro Line 9', 'Western Express Highway'] },
-  { city: 'Mumbai', name: 'Kharghar', zone: 'MMR – Navi Mumbai', rate: 11_500, highlights: ['Navi Mumbai Airport', 'Central Park'] },
-  { city: 'Bengaluru', name: 'Indiranagar', zone: 'East', rate: 21_000, highlights: ['100 Ft Road', 'Purple line metro'] },
-  { city: 'Bengaluru', name: 'Koramangala', zone: 'South East', rate: 19_000, highlights: ['Startup hub', 'Forum Mall'] },
-  { city: 'Bengaluru', name: 'HSR Layout', zone: 'South East', rate: 15_000, highlights: ['Outer Ring Road', 'Agara Lake'] },
-  { city: 'Bengaluru', name: 'Hebbal', zone: 'North', rate: 13_500, highlights: ['Airport corridor', 'Manyata Tech Park'] },
-  { city: 'Bengaluru', name: 'JP Nagar', zone: 'South', rate: 12_000, highlights: ['Green line metro', 'Established schools'] },
-  { city: 'Bengaluru', name: 'Whitefield', zone: 'East', rate: 10_500, highlights: ['ITPL', 'Purple line metro'] },
-  { city: 'Bengaluru', name: 'Sarjapur Road', zone: 'South East', rate: 9_800, highlights: ['Wipro & RMZ Ecospace', 'International schools'] },
-  { city: 'Bengaluru', name: 'Bannerghatta Road', zone: 'South', rate: 9_500, highlights: ['IIM Bangalore', 'Pink line metro'] },
-  { city: 'Bengaluru', name: 'Yelahanka', zone: 'North', rate: 8_800, highlights: ['Airport 20 min', 'Air Force Station greens'] },
-  { city: 'Bengaluru', name: 'Electronic City', zone: 'South', rate: 7_200, highlights: ['Infosys campus', 'Yellow line metro'] },
+  { city: 'Mumbai', name: 'Bandra West', district: 'Mumbai Suburban', zone: 'Western Suburbs', rate: 58_000, highlights: ['Sea-link access', 'Carter Road promenade'] },
+  { city: 'Mumbai', name: 'Worli', district: 'Mumbai City', zone: 'South Central', rate: 62_000, highlights: ['Coastal Road', 'Sea views'] },
+  { city: 'Mumbai', name: 'Andheri West', district: 'Mumbai Suburban', zone: 'Western Suburbs', rate: 31_000, highlights: ['Metro Line 1', 'Lokhandwala market'] },
+  { city: 'Mumbai', name: 'Powai', district: 'Mumbai Suburban', zone: 'Central Suburbs', rate: 29_000, highlights: ['Hiranandani Gardens', 'Powai Lake'] },
+  { city: 'Mumbai', name: 'Goregaon East', district: 'Mumbai Suburban', zone: 'Western Suburbs', rate: 23_000, highlights: ['NESCO & Oberoi Mall', 'WEH access'] },
+  { city: 'Mumbai', name: 'Chembur', district: 'Mumbai Suburban', zone: 'Eastern Suburbs', rate: 26_000, highlights: ['Eastern Freeway', 'Monorail'] },
+  { city: 'Mumbai', name: 'Malad West', district: 'Mumbai Suburban', zone: 'Western Suburbs', rate: 21_000, highlights: ['Mindspace IT park', 'Metro Line 2A'] },
+  { city: 'Mumbai', name: 'Borivali West', district: 'Mumbai Suburban', zone: 'Western Suburbs', rate: 22_000, highlights: ['Sanjay Gandhi National Park', 'Metro Line 2A'] },
+  { city: 'Mumbai', name: 'Mulund West', district: 'Mumbai Suburban', zone: 'Eastern Suburbs', rate: 19_500, highlights: ['LBS Marg retail', 'Central line'] },
+  { city: 'Mumbai', name: 'Kandivali East', district: 'Mumbai Suburban', zone: 'Western Suburbs', rate: 18_500, highlights: ['Metro Line 7', 'Thakur Village schools'] },
+  { city: 'Mumbai', name: 'Bhandup West', district: 'Mumbai Suburban', zone: 'Eastern Suburbs', rate: 17_500, highlights: ['LBS Marg', 'Central line'] },
+  { city: 'Mumbai', name: 'Dahisar East', district: 'Mumbai Suburban', zone: 'Western Suburbs', rate: 16_000, highlights: ['Metro Line 2A & 7 interchange', 'Western Express Highway'] },
+  { city: 'Mumbai', name: 'Thane West', district: 'Thane', zone: 'MMR – Thane', rate: 15_500, highlights: ['Ghodbunder Road', 'Upcoming Metro 4'] },
+  { city: 'Mumbai', name: 'Mira Road', district: 'Thane', zone: 'MMR – North', rate: 13_000, highlights: ['Metro Line 9', 'Western Express Highway'] },
+  { city: 'Mumbai', name: 'Kharghar', district: 'Raigad', zone: 'MMR – Navi Mumbai', rate: 11_500, highlights: ['Navi Mumbai Airport', 'Central Park'] },
+  { city: 'Bengaluru', name: 'Indiranagar', district: 'Bengaluru Urban', zone: 'East', rate: 21_000, highlights: ['100 Ft Road', 'Purple line metro'] },
+  { city: 'Bengaluru', name: 'Koramangala', district: 'Bengaluru Urban', zone: 'South East', rate: 19_000, highlights: ['Startup hub', 'Forum Mall'] },
+  { city: 'Bengaluru', name: 'HSR Layout', district: 'Bengaluru Urban', zone: 'South East', rate: 15_000, highlights: ['Outer Ring Road', 'Agara Lake'] },
+  { city: 'Bengaluru', name: 'Hebbal', district: 'Bengaluru Urban', zone: 'North', rate: 13_500, highlights: ['Airport corridor', 'Manyata Tech Park'] },
+  { city: 'Bengaluru', name: 'JP Nagar', district: 'Bengaluru Urban', zone: 'South', rate: 12_000, highlights: ['Green line metro', 'Established schools'] },
+  { city: 'Bengaluru', name: 'Whitefield', district: 'Bengaluru Urban', zone: 'East', rate: 10_500, highlights: ['ITPL', 'Purple line metro'] },
+  { city: 'Bengaluru', name: 'Sarjapur Road', district: 'Bengaluru Urban', zone: 'South East', rate: 9_800, highlights: ['Wipro & RMZ Ecospace', 'International schools'] },
+  { city: 'Bengaluru', name: 'Bannerghatta Road', district: 'Bengaluru Urban', zone: 'South', rate: 9_500, highlights: ['IIM Bangalore', 'Pink line metro'] },
+  { city: 'Bengaluru', name: 'Yelahanka', district: 'Bengaluru Urban', zone: 'North', rate: 8_800, highlights: ['Airport 20 min', 'Air Force Station greens'] },
+  { city: 'Bengaluru', name: 'Electronic City', district: 'Bengaluru Urban', zone: 'South', rate: 7_200, highlights: ['Infosys campus', 'Yellow line metro'] },
 ];
 
 const DEVELOPERS: Record<City, string[]> = {
@@ -101,8 +107,8 @@ function build(): Property[] {
   const list: Property[] = [];
   let n = 0;
   for (const loc of LOCALITIES) {
-    // Pricier localities skew toward smaller homes; outer ones get more large homes & villas.
-    const configs = loc.rate > 25_000 ? [1, 2, 2, 3, 4] : loc.rate > 14_000 ? [1, 2, 3, 3, 4] : [0, 1, 2, 3, 3, 4];
+    // Prime localities skew to 2–3 BHK; mid-priced ones include compact studios/1 BHKs; outer ones get more large homes & villas.
+    const configs = loc.rate > 25_000 ? [1, 2, 2, 3, 4] : loc.rate > 14_000 ? [0, 1, 1, 2, 3, 4] : [0, 1, 2, 3, 3, 4];
     const count = 5 + Math.floor(rnd() * 3);
     for (let i = 0; i < count; i++) {
       n++;
@@ -125,6 +131,7 @@ function build(): Property[] {
         title: `${bhk === 0 ? 'Studio' : `${bhk} BHK ${type === 'Apartment' ? 'Apartment' : type}`} in ${project}`,
         city: loc.city,
         locality: loc.name,
+        district: loc.district,
         zone: loc.zone,
         type,
         bhk,
@@ -151,4 +158,9 @@ export const PROPERTIES: Property[] = build();
 export const LOCALITIES_BY_CITY: Record<City, string[]> = {
   Mumbai: LOCALITIES.filter((l) => l.city === 'Mumbai').map((l) => l.name),
   Bengaluru: LOCALITIES.filter((l) => l.city === 'Bengaluru').map((l) => l.name),
+};
+
+export const DISTRICTS_BY_CITY: Record<City, string[]> = {
+  Mumbai: [...new Set(LOCALITIES.filter((l) => l.city === 'Mumbai').map((l) => l.district))],
+  Bengaluru: [...new Set(LOCALITIES.filter((l) => l.city === 'Bengaluru').map((l) => l.district))],
 };

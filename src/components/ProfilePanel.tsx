@@ -1,30 +1,40 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { emi, maxBudget, type City, type MortgageProfile } from '../lib/finance';
 import { applyImport, parseAmount, parseMortgageOutput } from '../lib/importProfile';
+import { parseDashRow, type DashAssessment } from '../lib/mortgageDash';
 import { inrShort } from '../lib/format';
 
 interface Props {
   profile: MortgageProfile;
   onChange: (p: MortgageProfile) => void;
   source: string;
+  onDashImport: (d: DashAssessment) => void;
+  children?: ReactNode;
 }
 
-const SAMPLE = `Max Loan Eligibility: ₹92,00,000
-Down Payment Available: ₹28 lakh
-Interest Rate: 8.4%
-Loan Tenure: 20 years
-Monthly EMI: ₹79,300`;
+// Same shape as a row copied from the MortgageDash Output sheet (fictional applicant).
+const SAMPLE = [
+  '2026-09-26T16:30:30.271Z', 'Sample Applicant', '', '', 'MUMBAI SUBURBAN', 'Salaried',
+  '210000', '2000000', '12000000', '26000', '56.67', 'FALSE', '79000', '8650000', '',
+].join('\t');
 
-export function ProfilePanel({ profile, onChange, source }: Props) {
+export function ProfilePanel({ profile, onChange, source, onDashImport, children }: Props) {
   const [importOpen, setImportOpen] = useState(false);
   const [raw, setRaw] = useState('');
   const [msg, setMsg] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null);
 
   const doImport = () => {
+    const row = parseDashRow(raw);
+    if (row) {
+      onDashImport(row);
+      setMsg({ kind: 'ok', text: `Imported MortgageDash ${row.source} row for ${row.name || 'applicant'} (${row.location}).` });
+      setImportOpen(false);
+      return;
+    }
     const parsed = parseMortgageOutput(raw);
     const keys = Object.keys(parsed);
     if (!keys.length) {
-      setMsg({ kind: 'err', text: 'Could not find loan amount, EMI, rate, tenure or down payment in that text.' });
+      setMsg({ kind: 'err', text: 'Not recognised. Copy a whole row (all columns) from the MortgageDash Input or Output sheet, or paste loan / EMI / down payment values.' });
       return;
     }
     onChange(applyImport(profile, parsed));
@@ -51,9 +61,10 @@ export function ProfilePanel({ profile, onChange, source }: Props) {
       {importOpen && (
         <div className="import-box">
           <label htmlFor="import-raw" className="small">
-            Paste the result from <a href="https://mortgagedash-ai.lovable.app" target="_blank" rel="noreferrer">MortgageDash</a> — text, JSON or a link with query parameters.
+            In the <a href="https://mortgagedash-ai.lovable.app" target="_blank" rel="noreferrer">MortgageDash</a> Output sheet (or Input sheet), select the applicant's row
+            number, copy it (Ctrl/⌘+C) and paste it here. Labelled text, JSON or a link with query parameters also work.
           </label>
-          <textarea id="import-raw" rows={6} value={raw} onChange={(e) => setRaw(e.target.value)} placeholder={SAMPLE} />
+          <textarea id="import-raw" rows={4} value={raw} onChange={(e) => setRaw(e.target.value)} placeholder="Paste a copied sheet row here…" />
           <div className="row gap">
             <button className="btn btn-primary" onClick={doImport} disabled={!raw.trim()}>Apply</button>
             <button className="btn btn-ghost" onClick={() => setRaw(SAMPLE)}>Use example</button>
@@ -61,6 +72,7 @@ export function ProfilePanel({ profile, onChange, source }: Props) {
         </div>
       )}
       {msg && <p className={`notice ${msg.kind}`} role="status">{msg.text}</p>}
+      {children}
 
       <div className="fields">
         <MoneyField label="Eligible loan" value={profile.eligibleLoan} onChange={(v) => set('eligibleLoan')(v ?? 0)} />
