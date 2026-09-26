@@ -163,3 +163,19 @@ export function maxBudget(city: City, profile: MortgageProfile): number {
   }
   return Math.floor(lo / 10_000) * 10_000;
 }
+
+/**
+ * What it takes to use the whole eligible loan in a city: the cheapest ready home on which
+ * RBI LTV norms allow that loan, and the own funds that home needs.
+ */
+export function fullLoanNeeds(city: City, profile: MortgageProfile): { price: number; cashNeeded: number } {
+  let lo = profile.eligibleLoan;
+  let hi = profile.eligibleLoan * 2;
+  for (let i = 0; i < 60; i++) {
+    const mid = (lo + hi) / 2;
+    if (ltvMaxLoan(mid) >= profile.eligibleLoan) hi = mid;
+    else lo = mid;
+  }
+  const price = Math.ceil(hi / 10_000) * 10_000;
+  return { price, cashNeeded: costBreakdown({ price, city, status: 'Ready to move', carpetSqft: 1000 }, profile).cashNeeded };
+}
