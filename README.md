@@ -49,6 +49,13 @@ npm test          # vitest: finance maths + MortgageDash importer
 npm run build     # static site in dist/ (relative base, host anywhere)
 ```
 
+## Deploy
+
+Every push to `main` builds, tests and publishes the site to GitHub Pages
+(`.github/workflows/deploy.yml`) at https://adarshmalpotra.github.io/Property-search-App-Sept-2026/.
+One-time setup: **Settings → Pages → Build and deployment → Source: GitHub Actions**. To redeploy without a
+code change, run the workflow from the **Actions** tab.
+
 ## Project layout
 
 | Path | Purpose |
