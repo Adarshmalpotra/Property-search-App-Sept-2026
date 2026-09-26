@@ -9,11 +9,12 @@ import { parseAmount } from './importProfile';
  *   A Name | B Email | C Phone | D Employment | E Location |
  *   F Monthly income | G Existing EMIs | H Property value | I Down payment
  *
- * Output sheet (15 columns — note the numeric columns are re-ordered):
+ * Output sheet (17 columns — note the numeric columns are re-ordered):
  *   A Timestamp | B Name | C Email | D Phone | E Location | F Employment |
  *   G Monthly income | H Down payment | I Property value | J Existing EMIs |
  *   K FOIR % on the requested loan | L Eligible (TRUE/FALSE) |
- *   M Max affordable EMI | N Max eligible loan | O Recommendation
+ *   M Max affordable EMI | N Max eligible loan | O Bank-by-bank analysis |
+ *   P Likely approving banks ("SBI, HDFC, …" or "None (…)") | Q Risk level
  *
  * Email and phone are intentionally not read — the search needs no contact data.
  */
@@ -31,7 +32,12 @@ export interface DashAssessment {
   eligible?: boolean;
   maxEmi?: number;
   maxLoan?: number;
-  recommendation?: string;
+  analysis?: string;
+  /** Banks MortgageDash expects to approve; empty when it says "None". */
+  banks?: string[];
+  /** Raw text of column P, e.g. "None (FOIR exceeds limits)". */
+  banksNote?: string;
+  risk?: string;
 }
 
 /** Share of income a lender lets go to all EMIs. Matches MortgageDash: 50% × 2,10,000 − 26,000 = 79,000. */
@@ -71,7 +77,9 @@ function fromCells(c: string[]): DashAssessment | undefined {
       eligible: eligibleCell === 'TRUE' ? true : eligibleCell === 'FALSE' ? false : undefined,
       maxEmi: num(c[12]),
       maxLoan: num(c[13]),
-      recommendation: c[14] || undefined,
+      analysis: c[14] || undefined,
+      ...parseBanks(c[15]),
+      risk: c[16] || undefined,
     };
   }
 
@@ -90,6 +98,12 @@ function fromCells(c: string[]): DashAssessment | undefined {
     };
   }
   return undefined;
+}
+
+function parseBanks(cell: string | undefined): Pick<DashAssessment, 'banks' | 'banksNote'> {
+  if (!cell) return {};
+  if (/^none\b/i.test(cell)) return { banks: [], banksNote: cell };
+  return { banks: cell.replace(/\s+/g, ' ').split(',').map((b) => b.trim()).filter(Boolean), banksNote: cell };
 }
 
 /** Minimal TSV reader that understands Sheets' quoting of cells containing tabs or newlines. */

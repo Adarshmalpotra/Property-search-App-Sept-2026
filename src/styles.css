@@ -210,3 +210,10 @@ code { font-size: 0.85em; }
 .dash-reco { background: var(--surface); border-radius: 10px; padding: 10px 12px; font-size: 0.9rem; }
 .link.inline-link { display: inline; margin: 0; font-weight: 600; }
 .dash .notice.info { margin: 0 0 10px; background: var(--surface); color: var(--text); }
+.dash-banks { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 10px; }
+.dash-banks .tags { margin: 0; }
+.dash-reco summary { cursor: pointer; font-weight: 600; }
+.dash-reco p { margin: 8px 0 0; line-height: 1.55; }
+.risk-fits { background: var(--fits-bg); color: var(--fits); }
+.risk-stretch { background: var(--stretch-bg); color: var(--stretch); }
+.risk-over { background: var(--over-bg); color: var(--over); }

@@ -143,6 +143,9 @@ export default function App() {
     const loanUsed = costBreakdown({ price: maxPrice, city: dashCity, status: 'Ready to move', carpetSqft: 1000 }, profile).loan;
     return { city: dashCity, maxPrice, loanUsed, fullLoanPrice: full.price, fullLoanCash: full.cashNeeded };
   }, [dashCity, profile]);
+  const requestedCash = dash && dashCity
+    ? costBreakdown({ price: dash.propertyValue, city: dashCity, status: 'Ready to move', carpetSqft: 1000 }, profile).cashNeeded
+    : undefined;
   const fitsInCity = filters.city === 'All' ? 0 : assessed.filter(({ property: p, fit }) => fit.fit === 'fits' && p.city === filters.city).length;
   const elsewhere = filters.district && filters.city !== 'All' && fitsInCity > matchingInArea
     ? { count: fitsInCity, label: `all of ${filters.city}`, onShow: () => setFilters((f) => ({ ...f, district: '', locality: '' })) }
@@ -174,7 +177,7 @@ export default function App() {
         </section>
 
         <ProfilePanel profile={profile} onChange={setProfile} source={source} onDashImport={importDash}>
-          {dash && <DashSummary dash={dash} matching={matchingInArea} area={area} budget={dashBudget} elsewhere={elsewhere} onClear={() => setDash(undefined)} />}
+          {dash && <DashSummary dash={dash} matching={matchingInArea} area={area} budget={dashBudget} requestedCash={requestedCash} elsewhere={elsewhere} onClear={() => setDash(undefined)} />}
         </ProfilePanel>
 
         <section className="search" aria-labelledby="search-h">
